@@ -1,0 +1,27 @@
+group 'test'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.7
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'org.hibernate:hibernate-core:4.3.6.Final'
+        compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.3.1.Final'
+        compile group: 'com.h2database', name: 'h2', version: '1.4.193'
+        compile 'javax.servlet:javax.servlet-api:3.1.0'
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    }
+}
