@@ -18,7 +18,7 @@ public class HibernateUtil {
     }
 
     public static void writeDataToDB(Entry entry) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+        Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.save(entry);
         session.getTransaction().commit();

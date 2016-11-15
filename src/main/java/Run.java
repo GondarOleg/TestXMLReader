@@ -14,13 +14,14 @@ public class Run {
         String processed_files_folder = prop.getProperty("processed_files_folder");
         String invalid_files_folder = prop.getProperty("invalid_files_folder");
 
+        HibernateUtil hibernateUtil = new HibernateUtil();
         File dir = new File(monitor_folder);
 
         File[] files = dir.listFiles();
         ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         if(files != null){
             for (File file : files){
-                exec.submit(new FileProcessTask(file));
+                exec.submit(new FileProcessTask(file, HibernateUtil.getSessionFactory()));
             }
         }
 

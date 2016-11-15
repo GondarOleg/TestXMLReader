@@ -4,6 +4,7 @@ import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -32,9 +33,11 @@ public class XMLUtil {
         }
     }
 
-    public static Entry unmarshal(File file) throws JAXBException, IOException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Entry.class);
+    public static Entry unmarshal(File file) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+
+       JAXBContext jaxbContext = JAXBContext.newInstance(EntryJAXB.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         return (Entry) jaxbUnmarshaller.unmarshal(file);
+
     }
 }

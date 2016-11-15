@@ -1,4 +1,8 @@
+import org.hibernate.SessionFactory;
+import org.xml.sax.SAXException;
+
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 
@@ -8,18 +12,21 @@ import java.io.IOException;
 public class FileProcessTask implements Runnable {
 
     private final File file;
+    private final SessionFactory sessionFactory;
 
-    public FileProcessTask(File file) {
+    public FileProcessTask(File file, SessionFactory sessionFactory) {
         this.file = file;
+        this.sessionFactory = sessionFactory;
     }
 
-    private void processFile(File file) throws IOException, JAXBException {
+    private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException, SAXException {
         if (XMLUtil.validateXML(file)) {
-            Entry entry = XMLUtil.unmarshal(file);
+            Entry entry = new Entry();
+            entry = XMLUtil.unmarshal(file);
             HibernateUtil.writeDataToDB(entry);
-            file.renameTo(new File("d:/test/processed" + file.getName()));
+            file.renameTo(new File("d:/test/processed/" + file.getName()));
         } else {
-            file.renameTo(new File("d:/test/invalid" + file.getName()));
+            file.renameTo(new File("d:/test/invalid/" + file.getName()));
         }
     }
 
@@ -30,6 +37,10 @@ public class FileProcessTask implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JAXBException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
             e.printStackTrace();
         }
     }
