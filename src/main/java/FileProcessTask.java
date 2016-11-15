@@ -35,7 +35,7 @@ public class FileProcessTask implements Runnable {
                 writeDataToDB(entry, sessionFactory);
                 file.renameTo(new File(PropertyReader.getProcessedDir() + file.getName()));
             }
-        }catch (SAXException e) {
+        } catch (SAXException e) {
             file.renameTo(new File(PropertyReader.getInvalidDir() + file.getName()));
             logger.error(e.getMessage());
         }
