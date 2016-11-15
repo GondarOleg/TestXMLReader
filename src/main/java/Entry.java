@@ -5,7 +5,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="Entry")
+@Table(name = "Entry")
 public class Entry {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
@@ -16,7 +16,7 @@ public class Entry {
     private String content;
 
     @Column(name = "creationDate")
-    @Type(type="timestamp")
+    @Type(type = "timestamp")
     private Date creationDate;
 
     public int getId() {

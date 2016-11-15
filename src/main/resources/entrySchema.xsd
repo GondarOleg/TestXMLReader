@@ -7,7 +7,7 @@
                 <xs:element name="content">
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
-                            <!--<xs:length value="1024"/>-->
+                            <xs:maxLength value="1024"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:element>

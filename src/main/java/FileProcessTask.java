@@ -1,3 +1,4 @@
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.xml.sax.SAXException;
@@ -14,6 +15,8 @@ import java.io.IOException;
  */
 public class FileProcessTask implements Runnable {
 
+    final static Logger logger = Logger.getLogger(FileProcessTask.class);
+
     private final File file;
     private final SessionFactory sessionFactory;
 
@@ -22,43 +25,38 @@ public class FileProcessTask implements Runnable {
         this.sessionFactory = sessionFactory;
     }
 
-    private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException, SAXException {
-        if (XMLUtil.validateXML(file)) {
-
+    private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException {
+        try {
             if (XMLUtil.validateXML(file)) {
                 EntryJAXB entryJAXB = unmarshal(file);
                 Entry entry = new Entry();
                 entry.setContent(entryJAXB.getContent());
                 entry.setCreationDate(entryJAXB.getCreationDate());
                 writeDataToDB(entry, sessionFactory);
-                System.out.println("d:/test/processed/" + file.getName());
-                file.renameTo(new File("d:/test/processed/" + file.getName()));
-            } else {
-
+                file.renameTo(new File(PropertyReader.getProcessedDir() + file.getName()));
             }
-        }
+        }catch (SAXException e) {
+            file.renameTo(new File(PropertyReader.getInvalidDir() + file.getName()));
+            logger.error(e.getMessage());
         }
 
-        @Override
-        public void run() {
-            try {
-                processFile(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JAXBException e) {
-                e.printStackTrace();
-            } catch (ParserConfigurationException e) {
-                e.printStackTrace();
-            } catch (SAXException e) {
-                e.printStackTrace();
-            }
+    }
+
+    @Override
+    public void run() {
+        try {
+            logger.info("Processing " + file.getName());
+            processFile(file);
+        } catch (IOException | JAXBException | ParserConfigurationException e) {
+            e.printStackTrace();
         }
+    }
 
     public static EntryJAXB unmarshal(File file) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(EntryJAXB.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         EntryJAXB entry = (EntryJAXB) jaxbUnmarshaller.unmarshal(file);
-        System.out.println("From unmarshal: " + entry.getContent());
+        logger.info("From unmarshal: " + entry.getContent());
         return entry;
     }
 
@@ -68,7 +66,7 @@ public class FileProcessTask implements Runnable {
         session.save(entry);
         session.getTransaction().commit();
         session.close();
-        System.out.println("Done");
+        logger.info("Done writing data to DB");
     }
 
 }
