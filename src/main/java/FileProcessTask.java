@@ -14,12 +14,12 @@ public class FileProcessTask implements Runnable {
     }
 
     private void processFile(File file) throws IOException, JAXBException {
-        if(XMLUtil.validateXML(file)){
-
-        }
-        Entry entry = XMLUtil.unmarshal(file);
-        if(entry != null){
+        if (XMLUtil.validateXML(file)) {
+            Entry entry = XMLUtil.unmarshal(file);
             HibernateUtil.writeDataToDB(entry);
+            file.renameTo(new File("d:/test/processed" + file.getName()));
+        } else {
+            file.renameTo(new File("d:/test/invalid" + file.getName()));
         }
     }
 

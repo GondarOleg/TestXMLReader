@@ -1,6 +1,9 @@
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Run {
     public static void main(String[] args) throws IOException {
@@ -11,12 +14,20 @@ public class Run {
         String processed_files_folder = prop.getProperty("processed_files_folder");
         String invalid_files_folder = prop.getProperty("invalid_files_folder");
 
+        File dir = new File(monitor_folder);
+
+        File[] files = dir.listFiles();
+        ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        if(files != null){
+            for (File file : files){
+                exec.submit(new FileProcessTask(file));
+            }
+        }
+
 
 
 
     }
-
-
 
 
 
