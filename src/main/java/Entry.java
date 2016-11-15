@@ -2,8 +2,11 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
+@XmlRootElement
 @Entity
 @Table(name="Entry")
 public class Entry {
@@ -17,7 +20,7 @@ public class Entry {
 
     @Column(name = "creationDate")
     @Type(type="timestamp")
-    private Date date;
+    private Date creationDate;
 
     public int getId() {
         return id;
@@ -28,16 +31,18 @@ public class Entry {
         return content;
     }
 
+    @XmlElement
     public void setContent(String content) {
         this.content = content;
     }
 
     public Date getCreationDate() {
-        return date;
+        return creationDate;
     }
 
+    @XmlElement
     public void setCreationDate(Date date) {
-        this.date = date;
+        this.creationDate = date;
     }
 }
 
