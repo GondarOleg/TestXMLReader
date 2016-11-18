@@ -1,17 +1,21 @@
-import org.apache.log4j.Logger;
+package tasks;
 
-import javax.xml.bind.JAXBException;
+import org.apache.log4j.Logger;
+import utils.HibernateUtil;
+import utils.PropertyReaderUtil;
+
 import java.io.File;
-import java.io.IOException;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Run {
-    final static Logger logger = Logger.getLogger(Run.class);
+public class ScheduledTask extends TimerTask{
+    final static Logger logger = Logger.getLogger(ScheduledTask.class);
 
-    public static void main(String[] args) throws IOException, JAXBException {
+    @Override
+    public void run() {
         HibernateUtil hibernateUtil = new HibernateUtil();
-        File dir = new File(PropertyReader.getMonitorDir());
+        File dir = new File(PropertyReaderUtil.getMonitorDir());
         File[] files = dir.listFiles();
         logger.info(files.length + " files found");
         ExecutorService exec = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

@@ -1,22 +1,13 @@
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.Length;
+package entries;
 
-import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
-@Entity
-@Table(name = "Entry")
-public class Entry {
-    @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+@XmlRootElement(name = "entries.Entry")
+public class EntryJAXB {
     private int id;
-
-    @Length(max = 1024)
-    @Column(name = "content")
     private String content;
-
-    @Column(name = "creationDate")
-    @Type(type = "timestamp")
     private Date creationDate;
 
     public int getId() {
@@ -28,6 +19,7 @@ public class Entry {
         return content;
     }
 
+    @XmlElement
     public void setContent(String content) {
         this.content = content;
     }
@@ -36,6 +28,7 @@ public class Entry {
         return creationDate;
     }
 
+    @XmlElement
     public void setCreationDate(Date date) {
         this.creationDate = date;
     }

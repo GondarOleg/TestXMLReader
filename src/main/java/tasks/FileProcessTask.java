@@ -1,7 +1,13 @@
+package tasks;
+
+import entries.Entry;
+import entries.EntryJAXB;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.xml.sax.SAXException;
+import utils.PropertyReaderUtil;
+import utils.XMLUtil;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,10 +39,10 @@ public class FileProcessTask implements Runnable {
                 entry.setContent(entryJAXB.getContent());
                 entry.setCreationDate(entryJAXB.getCreationDate());
                 writeDataToDB(entry, sessionFactory);
-                file.renameTo(new File(PropertyReader.getProcessedDir() + file.getName()));
+                file.renameTo(new File(PropertyReaderUtil.getProcessedDir() + file.getName()));
             }
         } catch (SAXException e) {
-            file.renameTo(new File(PropertyReader.getInvalidDir() + file.getName()));
+            file.renameTo(new File(PropertyReaderUtil.getInvalidDir() + file.getName()));
             logger.error(e.getMessage());
         }
 
@@ -52,7 +58,7 @@ public class FileProcessTask implements Runnable {
         }
     }
 
-    public static EntryJAXB unmarshal(File file) throws JAXBException {
+    public EntryJAXB unmarshal(File file) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(EntryJAXB.class);
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         EntryJAXB entry = (EntryJAXB) jaxbUnmarshaller.unmarshal(file);
@@ -60,7 +66,7 @@ public class FileProcessTask implements Runnable {
         return entry;
     }
 
-    public static void writeDataToDB(Entry entry, SessionFactory sessionFactory) {
+    public void writeDataToDB(Entry entry, SessionFactory sessionFactory) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         session.save(entry);
