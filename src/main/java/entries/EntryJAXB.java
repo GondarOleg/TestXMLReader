@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Date;
 
-@XmlRootElement(name = "entries.Entry")
+@XmlRootElement(name = "Entry")
 public class EntryJAXB {
     private int id;
     private String content;

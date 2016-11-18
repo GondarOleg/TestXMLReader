@@ -15,6 +15,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Created by O.Gondar on 15.11.2016.
@@ -32,6 +34,7 @@ public class FileProcessTask implements Runnable {
     }
 
     private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException {
+
         try {
             if (XMLUtil.validateXML(file)) {
                 EntryJAXB entryJAXB = unmarshal(file);
@@ -39,13 +42,11 @@ public class FileProcessTask implements Runnable {
                 entry.setContent(entryJAXB.getContent());
                 entry.setCreationDate(entryJAXB.getCreationDate());
                 writeDataToDB(entry, sessionFactory);
-                file.renameTo(new File(PropertyReaderUtil.getProcessedDir() + file.getName()));
+                Files.move(file.toPath(), new File(PropertyReaderUtil.getProcessedDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (SAXException e) {
-            file.renameTo(new File(PropertyReaderUtil.getInvalidDir() + file.getName()));
             logger.error(e.getMessage());
         }
-
     }
 
     @Override
