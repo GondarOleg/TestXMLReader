@@ -11,6 +11,5 @@ public class Scheduler {
         Timer timer = new Timer();
         ScheduledTask scheduledTask = new ScheduledTask();
         timer.schedule(scheduledTask, 0, PropertyReaderUtil.getTimePeriod());
-
     }
 }

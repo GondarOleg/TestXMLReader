@@ -29,18 +29,18 @@ public class FileProcessTask implements Runnable {
     }
 
     private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException {
-            if (XMLUtil.validateXML(file)) {
-                logger.info("Processing valid file.");
-                EntryJAXB entryJAXB = unmarshall(file);
-                Entry entry = new Entry();
-                entry.setContent(entryJAXB.getContent());
-                entry.setCreationDate(entryJAXB.getCreationDate());
-                writeDataToDB(entry, sessionFactory);
-                Files.move(file.toPath(), new File(PropertyReaderUtil.getProcessedDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }else {
-                logger.info("Not processing invalid file.");
-                Files.move(file.toPath(), new File(PropertyReaderUtil.getInvalidDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
+        if (XMLUtil.validateXML(file)) {
+            logger.info("Processing valid file.");
+            EntryJAXB entryJAXB = unmarshall(file);
+            Entry entry = new Entry();
+            entry.setContent(entryJAXB.getContent());
+            entry.setCreationDate(entryJAXB.getCreationDate());
+            writeDataToDB(entry, sessionFactory);
+            Files.move(file.toPath(), new File(PropertyReaderUtil.getProcessedDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            logger.info("Not processing invalid file.");
+            Files.move(file.toPath(), new File(PropertyReaderUtil.getInvalidDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FileProcessTask implements Runnable {
 
     public EntryJAXB unmarshall(File file) throws JAXBException {
         EntryJAXB entry = JAXB.unmarshal(file, EntryJAXB.class);
-        logger.info("From unmarshall: " + entry.getContent());
+        logger.info("Unmarshalling " + file.getName());
         return entry;
     }
 
