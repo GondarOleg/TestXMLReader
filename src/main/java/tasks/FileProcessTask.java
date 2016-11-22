@@ -5,22 +5,17 @@ import entries.EntryJAXB;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.xml.sax.SAXException;
 import utils.PropertyReaderUtil;
 import utils.XMLUtil;
 
-import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-/**
- * Created by O.Gondar on 15.11.2016.
- */
 public class FileProcessTask implements Runnable {
 
     final static Logger logger = Logger.getLogger(FileProcessTask.class);
@@ -34,19 +29,18 @@ public class FileProcessTask implements Runnable {
     }
 
     private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException {
-
-        try {
             if (XMLUtil.validateXML(file)) {
-                EntryJAXB entryJAXB = unmarshal(file);
+                logger.info("Processing valid file.");
+                EntryJAXB entryJAXB = unmarshall(file);
                 Entry entry = new Entry();
                 entry.setContent(entryJAXB.getContent());
                 entry.setCreationDate(entryJAXB.getCreationDate());
                 writeDataToDB(entry, sessionFactory);
                 Files.move(file.toPath(), new File(PropertyReaderUtil.getProcessedDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }else {
+                logger.info("Not processing invalid file.");
+                Files.move(file.toPath(), new File(PropertyReaderUtil.getInvalidDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-        } catch (SAXException e) {
-            logger.error(e.getMessage());
-        }
     }
 
     @Override
@@ -59,11 +53,9 @@ public class FileProcessTask implements Runnable {
         }
     }
 
-    public EntryJAXB unmarshal(File file) throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(EntryJAXB.class);
-        Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        EntryJAXB entry = (EntryJAXB) jaxbUnmarshaller.unmarshal(file);
-        logger.info("From unmarshal: " + entry.getContent());
+    public EntryJAXB unmarshall(File file) throws JAXBException {
+        EntryJAXB entry = JAXB.unmarshal(file, EntryJAXB.class);
+        logger.info("From unmarshall: " + entry.getContent());
         return entry;
     }
 
@@ -75,5 +67,4 @@ public class FileProcessTask implements Runnable {
         session.close();
         logger.info("Done writing data to DB");
     }
-
 }
