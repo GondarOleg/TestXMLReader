@@ -11,7 +11,7 @@ import java.util.Properties;
  */
 public class PropertyReaderUtil {
 
-    final static Logger logger = Logger.getLogger(PropertyReaderUtil.class);
+    static final Logger logger = Logger.getLogger(PropertyReaderUtil.class);
 
     private static String MONITOR_DIR;
     private static String PROCESSED_DIR;

@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ScheduledTask extends TimerTask {
-    final static Logger logger = Logger.getLogger(ScheduledTask.class);
+    static final Logger logger = Logger.getLogger(ScheduledTask.class);
 
     private HibernateUtil hibernateUtil;
 

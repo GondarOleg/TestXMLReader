@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class XMLUtil {
-    final static Logger logger = Logger.getLogger(XMLUtil.class);
+    static final Logger logger = Logger.getLogger(XMLUtil.class);
 
     public static boolean validateXML(File file) throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();

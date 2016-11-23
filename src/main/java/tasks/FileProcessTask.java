@@ -15,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 
 public class FileProcessTask implements Runnable {
 
-    final static Logger logger = Logger.getLogger(FileProcessTask.class);
+    static final Logger logger = Logger.getLogger(FileProcessTask.class);
 
     private final File file;
     private final SessionFactory sessionFactory;
