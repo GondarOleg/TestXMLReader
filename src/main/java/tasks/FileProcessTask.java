@@ -31,11 +31,7 @@ public class FileProcessTask implements Runnable {
     private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException {
         if (XMLUtil.validateXML(file)) {
             logger.info("Processing valid file.");
-            EntryJAXB entryJAXB = unmarshall(file);
-            Entry entry = new Entry();
-            entry.setContent(entryJAXB.getContent());
-            entry.setCreationDate(entryJAXB.getCreationDate());
-            writeDataToDB(entry, sessionFactory);
+            writeDataToDB(unmarshall(file), sessionFactory);
             Files.move(file.toPath(), new File(PropertyReaderUtil.getProcessedDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
         } else {
             logger.info("Not processing invalid file.");
@@ -53,9 +49,12 @@ public class FileProcessTask implements Runnable {
         }
     }
 
-    public EntryJAXB unmarshall(File file) throws JAXBException {
-        EntryJAXB entry = JAXB.unmarshal(file, EntryJAXB.class);
+    public Entry unmarshall(File file) throws JAXBException {
+        EntryJAXB entryJAXB = JAXB.unmarshal(file, EntryJAXB.class);
         logger.info("Unmarshalling " + file.getName());
+        Entry entry = new Entry();
+        entry.setContent(entryJAXB.getContent());
+        entry.setCreationDate(entryJAXB.getCreationDate());
         return entry;
     }
 

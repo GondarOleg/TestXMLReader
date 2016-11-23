@@ -12,9 +12,14 @@ import java.util.concurrent.Executors;
 public class ScheduledTask extends TimerTask {
     final static Logger logger = Logger.getLogger(ScheduledTask.class);
 
+    private HibernateUtil hibernateUtil;
+
+    public ScheduledTask(HibernateUtil hibernateUtil) {
+        this.hibernateUtil = hibernateUtil;
+    }
+
     @Override
     public void run() {
-        HibernateUtil hibernateUtil = new HibernateUtil();
         File dir = new File(PropertyReaderUtil.getMonitorDir());
         File[] files = dir.listFiles();
         logger.info(files.length + " files found");
