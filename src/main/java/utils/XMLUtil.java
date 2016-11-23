@@ -1,9 +1,13 @@
 package utils;
 
+import entries.Entry;
+import entries.EntryJAXB;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
+import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -29,5 +33,14 @@ public class XMLUtil {
             logger.info("Validation failed");
             return false;
         }
+    }
+
+    public static Entry unmarshall(File file) throws JAXBException {
+        EntryJAXB entryJAXB = JAXB.unmarshal(file, EntryJAXB.class);
+        logger.info("Unmarshalling " + file.getName());
+        Entry entry = new Entry();
+        entry.setContent(entryJAXB.getContent());
+        entry.setCreationDate(entryJAXB.getCreationDate());
+        return entry;
     }
 }

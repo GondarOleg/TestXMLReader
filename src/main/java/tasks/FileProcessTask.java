@@ -1,14 +1,11 @@
 package tasks;
 
-import entries.Entry;
-import entries.EntryJAXB;
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import utils.HibernateUtil;
 import utils.PropertyReaderUtil;
 import utils.XMLUtil;
 
-import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
@@ -31,7 +28,7 @@ public class FileProcessTask implements Runnable {
     private void processFile(File file) throws IOException, JAXBException, ParserConfigurationException {
         if (XMLUtil.validateXML(file)) {
             logger.info("Processing valid file.");
-            writeDataToDB(unmarshall(file), sessionFactory);
+            HibernateUtil.writeDataToDB(XMLUtil.unmarshall(file), sessionFactory);
             Files.move(file.toPath(), new File(PropertyReaderUtil.getProcessedDir() + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
         } else {
             logger.info("Not processing invalid file.");
@@ -47,23 +44,5 @@ public class FileProcessTask implements Runnable {
         } catch (IOException | JAXBException | ParserConfigurationException e) {
             e.printStackTrace();
         }
-    }
-
-    public Entry unmarshall(File file) throws JAXBException {
-        EntryJAXB entryJAXB = JAXB.unmarshal(file, EntryJAXB.class);
-        logger.info("Unmarshalling " + file.getName());
-        Entry entry = new Entry();
-        entry.setContent(entryJAXB.getContent());
-        entry.setCreationDate(entryJAXB.getCreationDate());
-        return entry;
-    }
-
-    public void writeDataToDB(Entry entry, SessionFactory sessionFactory) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.save(entry);
-        session.getTransaction().commit();
-        session.close();
-        logger.info("Done writing data to DB");
     }
 }
